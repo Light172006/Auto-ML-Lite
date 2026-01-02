@@ -1,47 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.decomposition import PCA
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import StandardScaler
-
-def clean(x):
-
-    x = x.dropna(subsets = [st.session_state.target],axis = 1)
-
-    imputer = SimpleImputer(strategy='mean')
-    imputed_data = imputer.fit_transform(x)
-    return imputed_data
-
-def X_encoding(x):
-    ohe = OneHotEncoder()
-    cat_features = x.select_dtypes(exclude='object')
-    encoded = ohe(cat_features,sparse=False)
-    result = x.drop(cat_features,axis = 1)
-    result = pd.concat([result,encoded],axis=1)
-    return result
-
-def y_encoding(y):
-    unique = y.unique()
-    num = len(unique)
-    for i in range(num):
-        y.iloc[0] = y.iloc[0].apply(lambda x: i if x == unique[i] else x)
-    return y
-
-def iscat(x):
-    cat = x.select_dtypes(exclude='object')
-    
-    return True if cat else False
-
-def data_scale(x):
-    numeric = x.select_dtypes(exclude='numeric')
-    numeric_feature_name = numeric.columns
-    scale = StandardScaler()
-    x[numeric_feature_name] = scale.fit_transform(x[numeric_feature_name])
-    return x
-
-pca = PCA(0.95)
+import regression
 
 st.set_page_config(page_title = 'Auto ML Lite')     # setting the page configuration
 
@@ -75,14 +35,7 @@ if st.text_input('Enter The Target',key = 'target'):
         st.error('Wrong input!, Enter Again')
     else:
         st.success('Target Succesfully Entered')
-        data = clean(data)
-        X_axis = data.drop(st.session_state.target)
-        X_axis = X_encoding(X_axis)
-        X_axis = data_scale(X_axis)
-        X_axis = pca.fit_transform(X_axis)
-        y_axis = data[st.session_state.target]
-        if iscat(y_axis):
-            y_axis = y_encoding(y_axis)
+        
         
 
 '''if st.button('Train'):
