@@ -111,7 +111,6 @@ classification_models = {
                                                  }
                             },
 }
-
 def train(x,y):
     first = True
     for model_name,model in classification_models.items():
