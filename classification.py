@@ -5,6 +5,7 @@ from sklearn.decomposition import PCA
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -112,6 +113,7 @@ classification_models = {
                             },
 }
 def train(x,y):
+    model = ""
     first = True
     for model_name,model in classification_models.items():
         grid = RandomizedSearchCV(model['model'],model['para'],cv=3,n_jobs=-1,scoring='accuracy')
@@ -121,12 +123,14 @@ def train(x,y):
         if first:
             score = grid.best_score_
             m_name = model_name
+            model = grid.best_estimator_
             first = False
         else:
             if grid.best_score_ > score:
                 score = grid.best_score_
                 m_name = model_name
+                model = grid.best_estimator_
         
     print(f"best model : {m_name}")
     print(f"best score : {score}")
-    return m_name , score
+    return m_name , score , model
