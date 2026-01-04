@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import training
+import preprocessing
 import joblib
 
 st.set_page_config(page_title = 'Auto ML Lite')     # setting the page configuration
@@ -33,13 +34,13 @@ if st.text_input('Enter The Target',key = 'target'):        #taking input of tar
         st.error('Wrong input!, Enter Again')
     else:
         st.success('Target Succesfully Entered')
-        data = training.clean(data,st.session_state.target)           #cleaning the dataset
+        data = preprocessing.clean(data,st.session_state.target)           #cleaning the dataset
         X_axis = data.drop([st.session_state.target],axis=1)                
         y_axis = data[st.session_state.target]
-        X_axis = training.feature_engineering(X_axis)                 #feature engineering
-        X_axis = training.X_encoding(X_axis)                          #one hot encoding x axis
-        X_axis = training.data_scale(X_axis)
-        y_axis = training.y_encoding(y_axis)                          #encoding y axis
+        X_axis = preprocessing.feature_engineering(X_axis)                 #feature engineering
+        X_axis = preprocessing.X_encoding(X_axis)                          #one hot encoding x axis
+        X_axis = preprocessing.data_scale(X_axis)
+        y_axis = preprocessing.y_encoding(y_axis)                          #encoding y axis
             
         if st.button('Train'):                                              #traing the model
             st.warning("Training model...")
