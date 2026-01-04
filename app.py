@@ -43,14 +43,15 @@ if st.text_input('Enter The Target',key = 'target'):        #taking input of tar
             y_axis = classification.y_encoding(y_axis)                          #encoding y axis
         else:
             st.write("Work On Preegress")
-
-        if st.button('Train'):                                 #traing the model
-            st.warning("Training model...")
-            best_model_name,best_score,best_model  = classification.train(X_axis,y_axis)
-            st.success('Traing Succesfull')
-            st.write(f'Best Model: {best_model_name}')
-            st.write(f'Score: {round(best_score,4)*100}')
-            joblib.dump(best_model,'best_model.pkl')            # saving the best model
-            with open('best_model.pkl','rb') as f:
-                st.write('### Here is your trained model:')
-                st.download_button("Best Model",data=f,file_name='best_model.pkl')
+            
+        if st.session_state.model == 'Classification':
+            if st.button('Train'):                                 #traing the model
+                st.warning("Training model...")
+                best_model_name,best_score,best_model  = classification.train(X_axis,y_axis)
+                st.success('Traing Succesfull')
+                st.write(f'Best Model: {best_model_name}')
+                st.write(f'Score: {round(best_score,4)*100}')
+                joblib.dump(best_model,'best_model.pkl')            # saving the best model
+                with open('best_model.pkl','rb') as f:
+                    st.write('### Here is your trained model:')
+                    st.download_button("Best Model",data=f,file_name='best_model.pkl')
