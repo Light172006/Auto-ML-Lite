@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import classification
+import training
 import joblib
 
 st.set_page_config(page_title = 'Auto ML Lite')     # setting the page configuration
@@ -33,25 +33,24 @@ if st.text_input('Enter The Target',key = 'target'):        #taking input of tar
         st.error('Wrong input!, Enter Again')
     else:
         st.success('Target Succesfully Entered')
-        if st.session_state.model == 'Classification':
-            data = classification.clean(data,st.session_state.target)           #cleaning the dataset
-            X_axis = data.drop([st.session_state.target],axis=1)                
-            y_axis = data[st.session_state.target]
-            X_axis = classification.feature_engineering(X_axis)                 #feature engineering
-            X_axis = classification.X_encoding(X_axis)                          #one hot encoding x axis
-            X_axis = classification.dimention_reduction(X_axis)                 #reducing dimensions 
-            y_axis = classification.y_encoding(y_axis)                          #encoding y axis
-        else:
-            st.write("Work On Preegress")
+        data = training.clean(data,st.session_state.target)           #cleaning the dataset
+        X_axis = data.drop([st.session_state.target],axis=1)                
+        y_axis = data[st.session_state.target]
+        X_axis = training.feature_engineering(X_axis)                 #feature engineering
+        X_axis = training.X_encoding(X_axis)                          #one hot encoding x axis
+        X_axis = training.data_scale(X_axis)
+        y_axis = training.y_encoding(y_axis)                          #encoding y axis
             
-        if st.session_state.model == 'Classification':
-            if st.button('Train'):                                 #traing the model
-                st.warning("Training model...")
-                best_model_name,best_score,best_model  = classification.train(X_axis,y_axis)
-                st.success('Traing Succesfull')
-                st.write(f'Best Model: {best_model_name}')
-                st.write(f'Score: {round(best_score,4)*100}')
-                joblib.dump(best_model,'best_model.pkl')            # saving the best model
-                with open('best_model.pkl','rb') as f:
-                    st.write('### Here is your trained model:')
-                    st.download_button("Best Model",data=f,file_name='best_model.pkl')
+        if st.button('Train'):                                              #traing the model
+            st.warning("Training model...")
+            if st.session_state.model == 'Classification':
+                best_model_name,best_score,best_model  = training.c_train(X_axis,y_axis)
+            else:
+                best_model_name,best_score,best_model  = training.r_train(X_axis,y_axis)
+            st.success('Traing Succesfull')
+            st.write(f'Best Model: {best_model_name}')
+            st.write(f'Score: {round(best_score,4)*100}')
+            joblib.dump(best_model,'best_model.pkl')                         # saving the best model
+            with open('best_model.pkl','rb') as f:
+                st.write('### Here is your trained model:')
+                st.download_button("Best Model",data=f,file_name='best_model.pkl')
